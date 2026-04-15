@@ -1,0 +1,25 @@
+{
+  "name": "arenaiq-backend",
+  "version": "1.0.0",
+  "description": "ArenaIQ Smart Stadium Assistant — Backend API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest --verbose"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "@google/genai": "^1.0.0",
+    "firebase-admin": "^12.6.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0"
+  },
+  "keywords": ["arenaiq", "gemini", "firebase", "stadium"],
+  "license": "MIT"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "arenaiq-simulator",
+  "version": "1.0.0",
+  "description": "ArenaIQ IoT crowd data simulator",
+  "main": "crowdSim.js",
+  "scripts": {
+    "start": "node crowdSim.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "dotenv": "^16.4.5"
+  },
+  "license": "MIT"
+}
