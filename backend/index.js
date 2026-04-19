@@ -12,7 +12,7 @@
 require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
 const express = require("express");
 const cors = require("cors");
-const { handleChat, generateStaffSummary } = require("./gemini");
+const { handleChat, generateStaffSummary } = require("./llm");
 const { getAllZones } = require("./crowd");
 const { checkAndCreateAlerts } = require("./alerts");
 
@@ -46,7 +46,10 @@ app.post("/chat", async (req, res) => {
     res.json({ reply: result.reply, sessionId: sessionId || null });
   } catch (err) {
     console.error("[chat] Error:", err.message);
-    res.status(500).json({ error: "Failed to process chat message. Please try again." });
+    const apiError = err.message.includes("PERMISSION_DENIED") || err.message.includes("403")
+      ? "API Error: Your Google Gemini API Key has been blocked or denied access."
+      : "Failed to process chat message. Please try again.";
+    res.status(500).json({ error: apiError });
   }
 });
 

@@ -32,18 +32,18 @@ const db = admin.firestore();
 // Each zone has a base range for realistic density distribution.
 // lat/lng are fictional positions around a stadium at ~37.4035, -121.9693
 const ZONES = [
-  { id: "gate_a",        name: "Gate A",        type: "gate",       baseMin: 20, baseMax: 60, lat: 37.4045, lng: -121.9693 },
-  { id: "gate_b",        name: "Gate B",        type: "gate",       baseMin: 15, baseMax: 50, lat: 37.4035, lng: -121.9683 },
-  { id: "gate_c",        name: "Gate C",        type: "gate",       baseMin: 30, baseMax: 85, lat: 37.4025, lng: -121.9693 },
-  { id: "gate_d",        name: "Gate D",        type: "gate",       baseMin: 10, baseMax: 45, lat: 37.4035, lng: -121.9703 },
-  { id: "concession_1",  name: "Concessions 1", type: "concession", baseMin: 40, baseMax: 75, lat: 37.4042, lng: -121.9690 },
-  { id: "concession_2",  name: "Concessions 2", type: "concession", baseMin: 50, baseMax: 95, lat: 37.4032, lng: -121.9685 },
-  { id: "concession_3",  name: "Concessions 3", type: "concession", baseMin: 25, baseMax: 60, lat: 37.4028, lng: -121.9690 },
-  { id: "concession_4",  name: "Concessions 4", type: "concession", baseMin: 30, baseMax: 70, lat: 37.4032, lng: -121.9700 },
-  { id: "restroom_1",    name: "Restroom 1",    type: "restroom",   baseMin: 45, baseMax: 90, lat: 37.4040, lng: -121.9686 },
-  { id: "restroom_2",    name: "Restroom 2",    type: "restroom",   baseMin: 20, baseMax: 55, lat: 37.4030, lng: -121.9698 },
-  { id: "main_stand",    name: "Main Stand",    type: "seating",    baseMin: 60, baseMax: 95, lat: 37.4035, lng: -121.9693 },
-  { id: "exit_corridor", name: "Exit Corridor", type: "corridor",   baseMin: 10, baseMax: 40, lat: 37.4035, lng: -121.9706 },
+  { id: "gate_a",        name: "Gate A",        type: "gate",       baseMin: 20, baseMax: 60, lat: 37.4038, lng: -121.9693 },
+  { id: "gate_b",        name: "Gate B",        type: "gate",       baseMin: 15, baseMax: 50, lat: 37.4032, lng: -121.9688 },
+  { id: "gate_c",        name: "Gate C",        type: "gate",       baseMin: 30, baseMax: 85, lat: 37.4027, lng: -121.9693 },
+  { id: "gate_d",        name: "Gate D",        type: "gate",       baseMin: 10, baseMax: 45, lat: 37.4032, lng: -121.9700 },
+  { id: "concession_1",  name: "Concessions 1", type: "concession", baseMin: 40, baseMax: 75, lat: 37.4036, lng: -121.9690 },
+  { id: "concession_2",  name: "Concessions 2", type: "concession", baseMin: 50, baseMax: 95, lat: 37.4031, lng: -121.9689 },
+  { id: "concession_3",  name: "Concessions 3", type: "concession", baseMin: 25, baseMax: 60, lat: 37.4029, lng: -121.9690 },
+  { id: "concession_4",  name: "Concessions 4", type: "concession", baseMin: 30, baseMax: 70, lat: 37.4031, lng: -121.9698 },
+  { id: "restroom_1",    name: "Restroom 1",    type: "restroom",   baseMin: 45, baseMax: 90, lat: 37.4036, lng: -121.9689 },
+  { id: "restroom_2",    name: "Restroom 2",    type: "restroom",   baseMin: 20, baseMax: 55, lat: 37.4029, lng: -121.9696 },
+  { id: "main_stand",    name: "Main Stand",    type: "seating",    baseMin: 60, baseMax: 95, lat: 37.4032, lng: -121.9694 },
+  { id: "exit_corridor", name: "Exit Corridor", type: "corridor",   baseMin: 10, baseMax: 40, lat: 37.4032, lng: -121.9701 },
 ];
 
 const DENSITY_THRESHOLD = 80;

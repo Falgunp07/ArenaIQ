@@ -7,6 +7,19 @@ import "./index.css";
 // Initialise Firebase (side-effect import)
 import "./firebase.js";
 
+// In local dev, aggressively clear stale PWA caches to prevent old CSS/JS from persisting.
+if (import.meta.env.DEV && typeof window !== "undefined" && "serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => registration.unregister());
+  });
+
+  if ("caches" in window) {
+    caches.keys().then((keys) => {
+      keys.forEach((key) => caches.delete(key));
+    });
+  }
+}
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>

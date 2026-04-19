@@ -1,15 +1,13 @@
-/**
- * StaffDashboard.jsx — Operations dashboard for staff
- *
- * Grid of all 12 zones with live status, density, and wait times.
- * Includes a Gemini-generated AI summary card identifying bottlenecks
- * and recommending actions.
- */
-
-import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import { BsArrowRepeat, BsRobot, BsShieldCheck } from "react-icons/bs";
-import { HiOutlineExclamation } from "react-icons/hi";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Activity,
+  AlertTriangle,
+  Bot,
+  CircleCheckBig,
+  Gauge,
+  RefreshCcw,
+  ShieldCheck,
+} from "lucide-react";
 import useRealtimeCrowd from "../hooks/useRealtimeCrowd";
 import ZoneCard from "./ZoneCard";
 import CrowdHeatmap from "./CrowdHeatmap";
@@ -20,172 +18,187 @@ export default function StaffDashboard() {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
 
-  // Fetch AI summary
   const fetchSummary = useCallback(async () => {
     setSummaryLoading(true);
     try {
-      const res = await fetch("/api/staff-summary", { method: "POST" });
-      if (res.ok) {
-        const data = await res.json();
-        setSummary(data.summary || "Unable to generate summary.");
-      } else {
-        setSummary("Failed to generate AI summary. Check backend connection.");
+      const response = await fetch("/api/staff-summary", { method: "POST" });
+      if (!response.ok) {
+        throw new Error(`Summary endpoint error (${response.status})`);
       }
+
+      const payload = await response.json();
+      setSummary(payload.summary || "No summary available right now.");
     } catch {
-      setSummary("Unable to reach AI backend. Ensure the server is running.");
+      setSummary("Unable to generate summary at the moment. Verify backend connectivity and try again.");
     } finally {
       setSummaryLoading(false);
       setLastRefresh(new Date());
     }
   }, []);
 
-  // Auto-fetch summary on load and every 60s
   useEffect(() => {
     fetchSummary();
     const interval = setInterval(fetchSummary, 60_000);
     return () => clearInterval(interval);
   }, [fetchSummary]);
 
-  // Stats calculations
   const totalZones = zones.length;
-  const highDensity = zones.filter((z) => z.density >= 80).length;
+  const highDensity = zones.filter((zone) => zone.density >= 80).length;
   const avgDensity = totalZones
-    ? Math.round(zones.reduce((sum, z) => sum + (z.density || 0), 0) / totalZones)
+    ? Math.round(zones.reduce((sum, zone) => sum + (zone.density || 0), 0) / totalZones)
     : 0;
+  const normalZones = totalZones - highDensity;
 
-  // Sort: highest density first
   const sortedZones = [...zones].sort((a, b) => (b.density || 0) - (a.density || 0));
+  const hotspotZones = sortedZones.filter((zone) => zone.density >= 80);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
-            <BsShieldCheck className="text-accent-cyan" />
-            Operations Dashboard
-          </h1>
-          <p className="text-sm text-text-secondary mt-1">
-            Real-time venue monitoring • {totalZones} zones active
-          </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="flex gap-3">
-          <div className="glass-card px-4 py-2 text-center">
-            <p className="text-lg font-bold font-mono text-accent-cyan">{avgDensity}%</p>
-            <p className="text-[10px] text-text-muted uppercase tracking-wider">Avg. Density</p>
-          </div>
-          <div className="glass-card px-4 py-2 text-center">
-            <p className={`text-lg font-bold font-mono ${highDensity > 0 ? "text-accent-red" : "text-accent-green"}`}>
-              {highDensity}
+    <div className="mx-auto max-w-[1400px] w-full p-4 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8">
+      <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="relative z-10 px-7 py-8 sm:px-10 sm:py-10 lg:px-12 flex flex-col gap-8">
+          <div className="max-w-3xl flex flex-col gap-3">
+            <p className="inline-flex items-center gap-2 rounded-full bg-accent-cyan/12 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-cyan">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Operations Command
             </p>
-            <p className="text-[10px] text-text-muted uppercase tracking-wider">High Zones</p>
+            <h1 className="text-3xl font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-4xl">Stadium Control Dashboard</h1>
+            <p className="max-w-[62ch] text-base leading-7 text-slate-600">
+              Monitor crowd risk in every zone, identify bottlenecks instantly, and coordinate staff response with AI-assisted recommendations.
+            </p>
           </div>
-          <div className="glass-card px-4 py-2 text-center">
-            <p className="text-lg font-bold font-mono text-accent-green">{totalZones - highDensity}</p>
-            <p className="text-[10px] text-text-muted uppercase tracking-wider">Normal</p>
+
+          <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-4">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-5">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400">Avg Density</p>
+              <p className="mt-2 text-xl font-bold leading-none text-accent-blue">{avgDensity}%</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-5">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400">Hotspots</p>
+              <p className="mt-2 text-xl font-bold leading-none text-accent-red">{highDensity}</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-5">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400">Stable</p>
+              <p className="mt-2 text-xl font-bold leading-none text-accent-green">{normalZones >= 0 ? normalZones : 0}</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-5">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400">Zones</p>
+              <p className="mt-2 text-xl font-bold leading-none text-slate-900">{totalZones || "--"}</p>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* AI Summary Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="gradient-border"
-      >
-        <div className="relative p-5 rounded-2xl bg-stadium-card">
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-purple to-accent-blue flex items-center justify-center">
-                <BsRobot className="text-white text-sm" />
-              </div>
-              <div>
-                <h2 className="text-sm font-semibold text-text-primary">AI Situation Report</h2>
-                <p className="text-[10px] text-text-muted">
-                  Powered by Gemini 2.0 Flash
-                  {lastRefresh && ` • ${lastRefresh.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
-                </p>
-              </div>
+      <section className="grid grid-cols-1 gap-8 xl:grid-cols-12">
+        <article className="bg-white xl:col-span-7 rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
+          <div className="mb-6 flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">AI Situation Report</p>
+              <h2 className="mt-1 flex items-center gap-2 text-xl font-bold leading-tight text-slate-900">
+                <Bot className="h-5 w-5 text-accent-purple" />
+                Live Operational Summary
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Updated every 60 seconds
+                {lastRefresh && ` • Last refresh ${lastRefresh.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
+              </p>
             </div>
+
             <button
               onClick={fetchSummary}
               disabled={summaryLoading}
-              className="p-2 rounded-lg text-text-muted hover:text-accent-cyan hover:bg-stadium-hover transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:border-accent-blue/35 hover:text-accent-blue disabled:opacity-50"
               aria-label="Refresh AI summary"
             >
-              <BsArrowRepeat className={`text-base ${summaryLoading ? "animate-spin" : ""}`} />
+              <RefreshCcw className={`h-4 w-4 ${summaryLoading ? "animate-spin" : ""}`} />
+              Refresh
             </button>
           </div>
 
           {summaryLoading && !summary ? (
-            <div className="space-y-2">
-              <div className="shimmer h-4 rounded-lg w-full" />
-              <div className="shimmer h-4 rounded-lg w-3/4" />
-              <div className="shimmer h-4 rounded-lg w-5/6" />
+            <div className="flex flex-col gap-3 py-4">
+              <div className="shimmer h-4 w-full rounded-lg" />
+              <div className="shimmer h-4 w-4/5 rounded-lg" />
+              <div className="shimmer h-4 w-5/6 rounded-lg" />
             </div>
           ) : (
-            <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">
-              {summary}
+            <p className="rounded-2xl border border-slate-200 bg-white px-6 py-5 text-base leading-7 text-slate-600 whitespace-pre-wrap">
+              {summary || "Summary will appear once the backend responds."}
             </p>
           )}
 
-          {/* Bottleneck badges */}
-          {highDensity > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-stadium-border">
-              {zones
-                .filter((z) => z.density >= 80)
-                .map((z) => (
-                  <span
-                    key={z.id}
-                    className="inline-flex items-center gap-1 status-red text-[10px] font-bold px-2 py-0.5 rounded-full"
-                  >
-                    <HiOutlineExclamation className="text-xs" />
-                    {z.name}: {z.density}%
-                  </span>
-                ))}
+          <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-5">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400">Risk Level</p>
+              <p className="mt-2 inline-flex items-center gap-1.5 text-base font-semibold leading-tight text-slate-900">
+                {highDensity > 0 ? <AlertTriangle className="h-4 w-4 text-accent-red" /> : <CircleCheckBig className="h-4 w-4 text-accent-green" />}
+                {highDensity > 0 ? "Needs attention" : "Controlled"}
+              </p>
             </div>
-          )}
-        </div>
-      </motion.div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-5">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400">Flow Health</p>
+              <p className="mt-2 inline-flex items-center gap-1.5 text-base font-semibold leading-tight text-slate-900">
+                <Activity className="h-4 w-4 text-accent-cyan" />
+                {avgDensity < 60 ? "Smooth" : avgDensity < 80 ? "Watch closely" : "Congested"}
+              </p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-5">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400">Command Advice</p>
+              <p className="mt-2 inline-flex items-center gap-1.5 text-base font-semibold leading-tight text-slate-900">
+                <Gauge className="h-4 w-4 text-accent-blue" />
+                Prioritize top density zones
+              </p>
+            </div>
+          </div>
+        </article>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Zones Grid */}
-        <div className="lg:col-span-2">
-          <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3">
-            All Zones
-          </h2>
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="glass-card p-4">
-                  <div className="shimmer h-4 w-24 rounded mb-3" />
-                  <div className="shimmer h-8 w-16 rounded mb-2" />
-                  <div className="shimmer h-2 w-full rounded" />
+        <article className="bg-white xl:col-span-5 rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
+          <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.14em] text-slate-600">Priority Hotspots</h2>
+          <div className="flex flex-col gap-3">
+            {hotspotZones.length > 0 ? (
+              hotspotZones.slice(0, 5).map((zone) => (
+                <div key={zone.id} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4">
+                  <p className="text-base font-semibold leading-tight text-slate-900">{zone.name}</p>
+                  <span className="shrink-0 rounded-md bg-red-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-red-700 border border-red-200">{zone.density}%</span>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {sortedZones.map((zone, i) => (
-                <ZoneCard key={zone.id} zone={zone} index={i} />
-              ))}
-            </div>
-          )}
-        </div>
+              ))
+            ) : (
+              <p className="rounded-xl border border-slate-200 bg-white px-4 py-6 text-sm leading-relaxed text-slate-600">
+                No high-risk hotspots right now. Operations are stable.
+              </p>
+            )}
+          </div>
+        </article>
+      </section>
 
-        {/* Heatmap Panel */}
-        <div className="lg:col-span-1">
-          <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3">
-            Live Heatmap
-          </h2>
-          <div className="sticky top-20">
-            <CrowdHeatmap compact />
+      <section className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col gap-6">
+        <h2 className="text-lg font-bold text-slate-900">Live Heatmap</h2>
+        <div className="h-[520px] rounded-2xl border border-slate-200 bg-white p-4">
+          <div className="h-full overflow-hidden rounded-xl border border-slate-200/70">
+            <CrowdHeatmap />
           </div>
         </div>
-      </div>
+      </section>
+
+      <section className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col gap-6">
+        <h2 className="text-lg font-bold text-slate-900">All Stadium Zones</h2>
+        {loading ? (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 9 }).map((_, index) => (
+              <div key={index} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="shimmer h-4 w-24 rounded mb-4" />
+                <div className="shimmer h-8 w-20 rounded mb-4" />
+                <div className="shimmer h-2 w-full rounded" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {sortedZones.map((zone, index) => (
+              <ZoneCard key={zone.id} zone={zone} index={index} />
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

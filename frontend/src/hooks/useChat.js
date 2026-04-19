@@ -45,11 +45,16 @@ export function useChat() {
           }),
         });
 
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          data = {};
         }
 
-        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || `Server error: ${res.status}`);
+        }
 
         const assistantMsg = {
           id: crypto.randomUUID(),
@@ -66,7 +71,7 @@ export function useChat() {
         const errorMsg = {
           id: crypto.randomUUID(),
           role: "assistant",
-          text: "Sorry, I'm having trouble connecting right now. Please try again in a moment.",
+          text: err.message.includes("API Error") ? err.message : "Sorry, I'm having trouble connecting right now. Please try again in a moment.",
           timestamp: new Date().toISOString(),
           isError: true,
         };

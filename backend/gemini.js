@@ -112,7 +112,7 @@ async function handleChat(userMessage, history = []) {
 
   // First call to Gemini
   let response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-3-flash-preview",
     contents,
     config: {
       tools,
@@ -160,7 +160,7 @@ async function handleChat(userMessage, history = []) {
 
     // Send function results back to Gemini
     response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-3-flash-preview",
       contents,
       config: {
         tools,
@@ -184,7 +184,7 @@ async function generateStaffSummary(zones) {
     .join("\n");
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-3-flash-preview",
     contents: [
       {
         role: "user",
