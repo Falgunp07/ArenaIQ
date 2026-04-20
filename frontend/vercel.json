@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://YOUR_RENDER_BACKEND_URL.onrender.com/$1"
+      "destination": "https://arenaiq-9ba6.onrender.com"
     },
     {
       "source": "/(.*)",
