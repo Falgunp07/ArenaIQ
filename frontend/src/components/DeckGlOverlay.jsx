@@ -17,7 +17,6 @@ export default function DeckGlOverlay({ layers }) {
   const deck = useMemo(
     () =>
       new GoogleMapsOverlay({
-        interleaved: true,
         layers: [],
       }),
     []
