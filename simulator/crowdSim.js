@@ -234,7 +234,12 @@ main().catch((err) => {
 // —— Create a dummy web server for Render ——
 // Render requires a "Web Service" to listen to a PORT, otherwise it kills the process.
 const http = require("http");
-const PORT = process.env.PORT || 3002;
+// Local dev loads root .env where PORT=3001 (backend), so don't reuse it here.
+// On Render, PORT is injected by the platform and must be used.
+const isRender = Boolean(process.env.RENDER || process.env.RENDER_SERVICE_ID);
+const PORT = isRender
+  ? Number(process.env.PORT)
+  : Number(process.env.SIMULATOR_PORT || 3002);
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/plain" });

@@ -10,7 +10,11 @@ const { GoogleGenAI } = require("@google/genai");
 const { getCrowdDensity, getWaitTime } = require("./crowd");
 
 // ── Initialise SDK ──
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const geminiApiKey = process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY;
+if (!geminiApiKey) {
+  throw new Error("Missing API key. Set GEMINI_API_KEY in environment variables.");
+}
+const ai = new GoogleGenAI({ apiKey: geminiApiKey });
 
 // ── System Prompt (venue context) ──
 const SYSTEM_PROMPT = `You are ArenaIQ, a friendly and helpful smart stadium assistant for a 60,000-seat multi-purpose arena. You help attendees navigate the venue, find less-crowded areas, and get real-time information.
