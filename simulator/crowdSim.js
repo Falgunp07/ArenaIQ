@@ -230,3 +230,17 @@ main().catch((err) => {
   console.error("[sim] Fatal:", err);
   process.exit(1);
 });
+
+// —— Create a dummy web server for Render ——
+// Render requires a "Web Service" to listen to a PORT, otherwise it kills the process.
+const http = require("http");
+const PORT = process.env.PORT || 3002;
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("ArenaIQ Simulator is running!\n");
+});
+
+server.listen(PORT, () => {
+  console.log(`[sim] Dummy web server listening on port ${PORT} to keep Render happy.`);
+});
