@@ -3,13 +3,13 @@ import { Route, Routes } from "react-router-dom";
 import { Clock3, Route as RouteIcon, Users } from "lucide-react";
 import { ErrorBoundary } from "react-error-boundary";
 import Layout from "./components/Layout";
-import ChatInterface from "./components/ChatInterface";
 import AlertBanner from "./components/AlertBanner";
-import StaffDashboard from "./components/StaffDashboard";
 import { NotificationProvider } from "./context/NotificationContext";
 import useRealtimeCrowd from "./hooks/useRealtimeCrowd";
 
 const CrowdHeatmap = lazy(() => import("./components/CrowdHeatmap"));
+const ChatInterface = lazy(() => import("./components/ChatInterface"));
+const StaffDashboard = lazy(() => import("./components/StaffDashboard"));
 
 function ErrorFallback({ error }) {
   return (
@@ -28,6 +28,14 @@ function ErrorFallback({ error }) {
 
 function getEstimatedWait(density = 0) {
   return Math.max(1, Math.round(density * 0.12));
+}
+
+function PanelFallback() {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="shimmer h-full w-full" />
+    </div>
+  );
 }
 
 function AttendeePage() {
@@ -144,7 +152,9 @@ function AttendeePage() {
                   <p className="text-sm text-slate-500 mt-1">Ask questions for instant guidance.</p>
                </div>
                <div className="flex-1 flex flex-col w-full min-h-0 bg-white">
-                 <ChatInterface />
+                 <Suspense fallback={<PanelFallback />}>
+                   <ChatInterface />
+                 </Suspense>
                </div>
             </div>
           </div>
@@ -161,7 +171,14 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<AttendeePage />} />
-          <Route path="/staff" element={<StaffDashboard />} />
+          <Route
+            path="/staff"
+            element={(
+              <Suspense fallback={<PanelFallback />}>
+                <StaffDashboard />
+              </Suspense>
+            )}
+          />
         </Routes>
       </Layout>
     </NotificationProvider>

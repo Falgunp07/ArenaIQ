@@ -2,7 +2,7 @@
  * index.js — ArenaIQ Backend Server
  *
  * Express server with three endpoints:
- *   POST /chat       — Grok AI chat with function calling
+ *   POST /chat       — Gemini AI chat with function calling
  *   GET  /crowd-data — All zone density data (REST fallback)
  *   POST /alerts     — Manual alert trigger endpoint
  *   GET  /health     — Health check
@@ -14,7 +14,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const { handleChat, generateStaffSummary } = require("./llm");
+const { handleChat, generateStaffSummary } = require("./gemini");
 const { getAllZones } = require("./crowd");
 const { checkAndCreateAlerts } = require("./alerts");
 

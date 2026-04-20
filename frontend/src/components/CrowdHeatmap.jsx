@@ -17,17 +17,6 @@ const COLOR_RANGE = [
   [239, 68, 68, 255],
 ];
 
-function seedValue(seedText) {
-  let hash = 0;
-  for (let i = 0; i < seedText.length; i += 1) {
-    hash = (hash << 5) - hash + seedText.charCodeAt(i);
-    hash |= 0;
-  }
-
-  const pseudo = Math.sin(hash) * 10000;
-  return pseudo - Math.floor(pseudo);
-}
-
 export default function CrowdHeatmap({ compact = false }) {
   const { zones, loading } = useRealtimeCrowd();
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;

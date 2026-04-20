@@ -191,7 +191,11 @@ export default function StaffDashboard() {
         <h2 className="text-lg font-bold text-slate-900">Live Heatmap</h2>
         <div className="h-130 rounded-2xl border border-slate-200 bg-white p-4">
           <div className="h-full overflow-hidden rounded-xl border border-slate-200/70">
-            <CrowdHeatmap />
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <Suspense fallback={<div className="shimmer h-full w-full" />}>
+                <CrowdHeatmap />
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </div>
       </section>

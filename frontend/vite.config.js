@@ -7,6 +7,18 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(Date.now().toString()),
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-firebase": ["firebase/app", "firebase/firestore", "firebase/auth"],
+          "vendor-maps": ["@vis.gl/react-google-maps", "@deck.gl/aggregation-layers", "@deck.gl/google-maps"],
+          "vendor-ui": ["lucide-react", "react-error-boundary"],
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     tailwindcss(),
