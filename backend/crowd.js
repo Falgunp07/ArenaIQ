@@ -10,9 +10,17 @@ const admin = require("firebase-admin");
 
 // ── Initialise Firebase Admin (singleton) ──
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-  });
+  let credential;
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    // For Render / Production where uploading a JSON file directly is insecure
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    credential = admin.credential.cert(serviceAccount);
+  } else {
+    // Local dev uses applicationDefault (reads GOOGLE_APPLICATION_CREDENTIALS from .env)
+    credential = admin.credential.applicationDefault();
+  }
+
+  admin.initializeApp({ credential });
 }
 
 const db = admin.firestore();
