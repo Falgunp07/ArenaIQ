@@ -4,6 +4,15 @@ steps:
   args: ["install"]
 - name: "node"
   entrypoint: "npm"
-  args: ["test"]
+  args: ["--prefix", "frontend", "ci"]
+- name: "node"
+  entrypoint: "npm"
+  args: ["--prefix", "frontend", "run", "build"]
+- name: "node"
+  entrypoint: "npm"
+  args: ["--prefix", "backend", "ci"]
+- name: "node"
+  entrypoint: "npm"
+  args: ["--prefix", "backend", "test"]
 options:
   logging: CLOUD_LOGGING_ONLY
