@@ -1,12 +1,30 @@
+import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Clock3, Route as RouteIcon, Users } from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
 import Layout from "./components/Layout";
 import ChatInterface from "./components/ChatInterface";
-import CrowdHeatmap from "./components/CrowdHeatmap";
 import AlertBanner from "./components/AlertBanner";
 import StaffDashboard from "./components/StaffDashboard";
 import { NotificationProvider } from "./context/NotificationContext";
 import useRealtimeCrowd from "./hooks/useRealtimeCrowd";
+
+const CrowdHeatmap = lazy(() => import("./components/CrowdHeatmap"));
+
+function ErrorFallback({ error }) {
+  return (
+    <div className="flex h-full min-h-[400px] flex-col items-center justify-center rounded-2xl bg-red-50 p-6 text-center">
+      <h2 className="text-xl font-bold text-red-900 mb-2">Something went wrong</h2>
+      <p className="text-sm text-red-700 mb-4">{error.message}</p>
+      <button 
+        onClick={() => window.location.reload()} 
+        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+      >
+        Reload Page
+      </button>
+    </div>
+  );
+}
 
 function getEstimatedWait(density = 0) {
   return Math.max(1, Math.round(density * 0.12));
@@ -74,7 +92,11 @@ function AttendeePage() {
                  <span className="text-sm font-medium text-slate-500">Updated constantly</span>
               </div>
               <div className="h-[450px] w-full rounded-2xl overflow-hidden border border-slate-200 bg-slate-50">
-                 <CrowdHeatmap />
+                 <ErrorBoundary FallbackComponent={ErrorFallback}>
+                   <Suspense fallback={<div className="flex h-full items-center justify-center"><div className="shimmer w-full h-full" /></div>}>
+                     <CrowdHeatmap />
+                   </Suspense>
+                 </ErrorBoundary>
               </div>
             </div>
 

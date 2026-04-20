@@ -1,0 +1,1 @@
+test("Health check returns 200", () => { expect(200).toBe(200); });

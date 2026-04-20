@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, Suspense, lazy } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -8,9 +8,26 @@ import {
   RefreshCcw,
   ShieldCheck,
 } from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
 import useRealtimeCrowd from "../hooks/useRealtimeCrowd";
 import ZoneCard from "./ZoneCard";
-import CrowdHeatmap from "./CrowdHeatmap";
+
+const CrowdHeatmap = lazy(() => import("./CrowdHeatmap"));
+
+function ErrorFallback({ error }) {
+  return (
+    <div className="flex h-full min-h-[400px] flex-col items-center justify-center rounded-2xl bg-red-50 p-6 text-center">
+      <h2 className="text-xl font-bold text-red-900 mb-2">Map Error</h2>
+      <p className="text-sm text-red-700 mb-4">{error.message}</p>
+      <button 
+        onClick={() => window.location.reload()} 
+        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+      >
+        Retry
+      </button>
+    </div>
+  );
+}
 
 export default function StaffDashboard() {
   const { zones, loading } = useRealtimeCrowd();

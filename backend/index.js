@@ -12,16 +12,27 @@
 require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
 const express = require("express");
 const cors = require("cors");
-const { handleChat, generateStaffSummary } = require("./llm");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const { handleChat, generateStaffSummary } = require("./gemini");
 const { getAllZones } = require("./crowd");
 const { checkAndCreateAlerts } = require("./alerts");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ── Middleware ──
+// —— Middleware ——
+app.use(helmet()); 
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
 app.use(express.json({ limit: "1mb" }));
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  message: "Too many requests from this IP, please try again later."
+});
+app.use(limiter);
 
 // ── Health Check ──
 app.get("/health", (_req, res) => {
