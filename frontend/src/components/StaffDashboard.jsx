@@ -16,7 +16,7 @@ const CrowdHeatmap = lazy(() => import("./CrowdHeatmap"));
 
 function ErrorFallback({ error }) {
   return (
-    <div className="flex h-full min-h-[400px] flex-col items-center justify-center rounded-2xl bg-red-50 p-6 text-center">
+    <div className="flex h-full min-h-100 flex-col items-center justify-center rounded-2xl bg-red-50 p-6 text-center">
       <h2 className="text-xl font-bold text-red-900 mb-2">Map Error</h2>
       <p className="text-sm text-red-700 mb-4">{error.message}</p>
       <button 
@@ -70,7 +70,7 @@ export default function StaffDashboard() {
   const hotspotZones = sortedZones.filter((zone) => zone.density >= 80);
 
   return (
-    <div className="mx-auto max-w-[1400px] w-full p-4 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8">
+    <div className="mx-auto max-w-350 w-full p-4 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8">
       <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="relative z-10 px-7 py-8 sm:px-10 sm:py-10 lg:px-12 flex flex-col gap-8">
           <div className="max-w-3xl flex flex-col gap-3">
@@ -189,7 +189,7 @@ export default function StaffDashboard() {
 
       <section className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col gap-6">
         <h2 className="text-lg font-bold text-slate-900">Live Heatmap</h2>
-        <div className="h-[520px] rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="h-130 rounded-2xl border border-slate-200 bg-white p-4">
           <div className="h-full overflow-hidden rounded-xl border border-slate-200/70">
             <CrowdHeatmap />
           </div>

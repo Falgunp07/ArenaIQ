@@ -55,13 +55,13 @@ export default function ChatInterface() {
       </div>
 
       <div
-        className="flex-1 flex flex-col gap-4 overflow-y-auto px-5 py-5 scrollbar-thin overflow-x-hidden min-h-[100px]"
+        className="flex-1 flex flex-col gap-4 overflow-y-auto px-5 py-5 scrollbar-thin overflow-x-hidden min-h-25"
         role="log"
         aria-label="Chat messages"
         aria-live="polite"
       >
         {messages.length === 0 && (
-          <div className="flex h-full min-h-[220px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#1e293b] bg-[#0f172a]/40 px-5 py-6 text-center">
+          <div className="flex h-full min-h-55 flex-col items-center justify-center rounded-2xl border border-dashed border-[#1e293b] bg-[#0f172a]/40 px-5 py-6 text-center">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600/20 text-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.3)]">
               <Sparkles className="h-6 w-6" />
             </div>
@@ -156,7 +156,7 @@ export default function ChatInterface() {
             aria-label="Send message"
             id="chat-send-btn"
           >
-            <SendHorizonal className="h-[18px] w-[18px]" />
+            <SendHorizonal className="h-4.5 w-4.5" />
           </button>
         </div>
       </form>

@@ -77,7 +77,7 @@ export default function CrowdHeatmap({ compact = false }) {
 
   if (!apiKey) {
     return (
-      <div className={`flex h-full items-center justify-center p-5 ${compact ? "min-h-56" : "min-h-[380px]"}`}>
+      <div className={`flex h-full items-center justify-center p-5 ${compact ? "min-h-56" : "min-h-95"}`}>
         <div className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 text-center">
           <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-accent-amber/15 text-accent-amber">
             <TriangleAlert className="h-5 w-5" />
@@ -104,7 +104,7 @@ export default function CrowdHeatmap({ compact = false }) {
   }
 
   return (
-    <div className={`relative h-full overflow-hidden ${compact ? "min-h-56" : "min-h-[380px]"}`}>
+    <div className={`relative h-full overflow-hidden ${compact ? "min-h-56" : "min-h-95"}`}>
       {loading && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60">
           <div className="shimmer h-full w-full" />
@@ -131,7 +131,7 @@ export default function CrowdHeatmap({ compact = false }) {
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Density Sensor</p>
             <p className="text-[10px] text-slate-400 tracking-wider">Low &rarr; Max</p>
           </div>
-          <div className="mt-3 h-1.5 w-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-500 to-red-500" />
+          <div className="mt-3 h-1.5 w-full rounded-full bg-linear-to-r from-emerald-500 via-amber-500 to-red-500" />
         </div>
       )}
     </div>

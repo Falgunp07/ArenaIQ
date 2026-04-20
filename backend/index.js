@@ -57,6 +57,16 @@ app.post("/chat", async (req, res) => {
     res.json({ reply: result.reply, sessionId: sessionId || null });
   } catch (err) {
     console.error("[chat] Error:", err.message);
+    const msg = String(err.message || "");
+
+    if (msg.includes("RESOURCE_EXHAUSTED") || msg.includes('"code":429') || msg.includes("quota")) {
+      return res.status(200).json({
+        reply:
+          "Gemini API quota is temporarily exhausted for this key. Please retry in a bit, or use a key with available quota.",
+        sessionId: req.body?.sessionId || null,
+      });
+    }
+
     const apiError = err.message.includes("PERMISSION_DENIED") || err.message.includes("403")
       ? "API Error: Your Google Gemini API Key has been blocked or denied access."
       : "Failed to process chat message. Please try again.";

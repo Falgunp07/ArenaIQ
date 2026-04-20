@@ -13,7 +13,7 @@ const CrowdHeatmap = lazy(() => import("./components/CrowdHeatmap"));
 
 function ErrorFallback({ error }) {
   return (
-    <div className="flex h-full min-h-[400px] flex-col items-center justify-center rounded-2xl bg-red-50 p-6 text-center">
+    <div className="flex h-full min-h-100 flex-col items-center justify-center rounded-2xl bg-red-50 p-6 text-center">
       <h2 className="text-xl font-bold text-red-900 mb-2">Something went wrong</h2>
       <p className="text-sm text-red-700 mb-4">{error.message}</p>
       <button 
@@ -44,7 +44,7 @@ function AttendeePage() {
     <>
       <AlertBanner />
 
-      <div className="mx-auto max-w-[1400px] w-full p-4 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8">
+      <div className="mx-auto max-w-350 w-full p-4 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8">
         
         {/* HEADER AREA */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col xl:flex-row gap-8 justify-between xl:items-center">
@@ -91,7 +91,7 @@ function AttendeePage() {
                  <h2 className="text-xl font-bold text-slate-800">Live Crowd Map</h2>
                  <span className="text-sm font-medium text-slate-500">Updated constantly</span>
               </div>
-              <div className="h-[450px] w-full rounded-2xl overflow-hidden border border-slate-200 bg-slate-50">
+              <div className="h-112.5 w-full rounded-2xl overflow-hidden border border-slate-200 bg-slate-50">
                  <ErrorBoundary FallbackComponent={ErrorFallback}>
                    <Suspense fallback={<div className="flex h-full items-center justify-center"><div className="shimmer w-full h-full" /></div>}>
                      <CrowdHeatmap />
@@ -137,7 +137,7 @@ function AttendeePage() {
           </div>
 
           {/* CHAT COLUMN */}
-          <div className="lg:col-span-4 relative flex flex-col h-[600px] lg:h-auto">
+          <div className="lg:col-span-4 relative flex flex-col h-150 lg:h-auto">
             <div className="absolute inset-0 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
                <div className="p-6 border-b border-slate-100 bg-slate-50/50 shrink-0">
                   <h2 className="text-lg font-bold text-slate-800">ArenaIQ Assistant</h2>
