@@ -18,6 +18,7 @@ export default function DeckGlOverlay({ layers }) {
     () =>
       new GoogleMapsOverlay({
         layers: [],
+        interleaved: false,
       }),
     []
   );

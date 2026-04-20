@@ -56,8 +56,10 @@ export default function CrowdHeatmap({ compact = false }) {
     return points;
   }, [zones]);
 
-  const layers = useMemo(
-    () => [
+  const layers = useMemo(() => {
+    if (!heatmapData.length) return [];
+
+    return [
       new HeatmapLayer({
         id: "crowd-heatmap",
         data: heatmapData,
@@ -70,9 +72,8 @@ export default function CrowdHeatmap({ compact = false }) {
         colorDomain: [0, 8],
         colorRange: COLOR_RANGE,
       }),
-    ],
-    [compact, heatmapData]
-  );
+    ];
+  }, [compact, heatmapData]);
 
   if (!apiKey) {
     return (
@@ -120,7 +121,7 @@ export default function CrowdHeatmap({ compact = false }) {
           style={{ width: "100%", height: "100%" }}
           colorScheme="DARK"
         >
-          <DeckGlOverlay layers={layers} />
+          {layers.length > 0 && <DeckGlOverlay layers={layers} />}
         </Map>
       </APIProvider>
 

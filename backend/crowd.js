@@ -7,6 +7,18 @@
  */
 
 const admin = require("firebase-admin");
+const path = require("path");
+
+// Normalize credential file path so it works regardless of how node is started.
+if (process.env.GOOGLE_APPLICATION_CREDENTIALS && !path.isAbsolute(process.env.GOOGLE_APPLICATION_CREDENTIALS)) {
+  const fromBackend = path.resolve(__dirname, process.env.GOOGLE_APPLICATION_CREDENTIALS);
+  const fromRepoRoot = path.resolve(__dirname, "..", process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = fromBackend;
+  if (!require("fs").existsSync(fromBackend) && require("fs").existsSync(fromRepoRoot)) {
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = fromRepoRoot;
+  }
+}
 
 // ── Initialise Firebase Admin (singleton) ──
 if (!admin.apps.length) {

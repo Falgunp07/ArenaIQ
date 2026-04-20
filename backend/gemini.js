@@ -99,6 +99,11 @@ const functionHandlers = {
   get_wait_time: async (args) => getWaitTime(args.facility_id),
 };
 
+function getFunctionCallParts(response) {
+  const parts = response?.candidates?.[0]?.content?.parts || [];
+  return parts.filter((part) => part && part.functionCall);
+}
+
 /**
  * Handle a chat message with Gemini function calling.
  * Supports multi-turn function calls (Gemini may call multiple functions).
@@ -126,35 +131,41 @@ async function handleChat(userMessage, history = []) {
 
   // Function calling loop (max 5 iterations to prevent infinite loops)
   let iterations = 0;
-  while (response.functionCalls && response.functionCalls.length > 0 && iterations < 5) {
+  while (iterations < 5) {
+    const functionCallParts = getFunctionCallParts(response);
+    const calls = functionCallParts.map((part) => part.functionCall).filter(Boolean);
+    if (!calls.length) {
+      break;
+    }
+
     iterations++;
 
     const functionResponses = [];
 
     // Execute all function calls in parallel
-    for (const call of response.functionCalls) {
+    for (const call of calls) {
       const handler = functionHandlers[call.name];
       if (!handler) {
         console.error(`[gemini] Unknown function: ${call.name}`);
         functionResponses.push({
           name: call.name,
+          id: call.id,
           response: { error: `Unknown function: ${call.name}` },
         });
         continue;
       }
 
       console.log(`[gemini] Calling ${call.name}(${JSON.stringify(call.args)})`);
-      const result = await handler(call.args);
+      const result = await handler(call.args || {});
       functionResponses.push({
         name: call.name,
+        id: call.id,
         response: result,
       });
     }
 
-    // Build the follow-up content with function calls and responses
-    const functionCallParts = response.functionCalls.map((call) => ({
-      functionCall: call,
-    }));
+    // Build the follow-up content with original function-call parts and responses
+    // to preserve thoughtSignature metadata required by Gemini tools API.
     const functionResponseParts = functionResponses.map((fr) => ({
       functionResponse: fr,
     }));
