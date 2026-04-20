@@ -2,7 +2,7 @@
  * index.js — ArenaIQ Backend Server
  *
  * Express server with three endpoints:
- *   POST /chat       — Gemini AI chat with function calling
+ *   POST /chat       — Grok AI chat with function calling
  *   GET  /crowd-data — All zone density data (REST fallback)
  *   POST /alerts     — Manual alert trigger endpoint
  *   GET  /health     — Health check
@@ -14,7 +14,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const { handleChat, generateStaffSummary } = require("./gemini");
+const { handleChat, generateStaffSummary } = require("./llm");
 const { getAllZones } = require("./crowd");
 const { checkAndCreateAlerts } = require("./alerts");
 
@@ -62,13 +62,13 @@ app.post("/chat", async (req, res) => {
     if (msg.includes("RESOURCE_EXHAUSTED") || msg.includes('"code":429') || msg.includes("quota")) {
       return res.status(200).json({
         reply:
-          "Gemini API quota is temporarily exhausted for this key. Please retry in a bit, or use a key with available quota.",
+          "AI API quota is temporarily exhausted for this key. Please retry in a bit, or use a key with available quota.",
         sessionId: req.body?.sessionId || null,
       });
     }
 
     const apiError = err.message.includes("PERMISSION_DENIED") || err.message.includes("403")
-      ? "API Error: Your Google Gemini API Key has been blocked or denied access."
+      ? "API Error: Your AI API key has been blocked or denied access."
       : "Failed to process chat message. Please try again.";
     res.status(500).json({ error: apiError });
   }
